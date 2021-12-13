@@ -8,12 +8,6 @@ import pandas as pd
 
 device = torch.device('cude' if torch.cuda.is_available() else 'cpu')
 
-#TODO
-# - How to make download reusable
-#- Why is test data not downloaded
-#- what are differences in train and test dataest
-# what is torch.max outptus
-# what is .item()
 
 # hyperparameters
 input_size = 784
@@ -96,21 +90,17 @@ def evaluate_model(model):
         print(f'Accuracy of the network on the test images: {100 * correct/total}%')
     return 100 * correct/total
 
-# Save the model
-# accuracies = []
-# for i in range(100):
-#     model = get_trained_model()
-#     accuracy = evaluate_model(model)
-#     accuracies.append(accuracy)
-#     torch.save(model.state_dict(), f'../model/model_{i}.ckpt')
-#
-# df = pd.DataFrame({'accuracy':accuracies})
-# df.to_csv('accuracy.csv')
-accuracies = []
-for i in range(30):
-    model = MLP(input_size, hidden_size, num_classes).to(device)
-    model.load_state_dict(torch.load(f'../model/model_{i}.ckpt'))
-    accuracy = evaluate_model(model)
-    accuracies.append(accuracy)
-df = pd.DataFrame({'accuracy':accuracies})
-df.to_csv('accuracy.csv')
+if __name__=="__main__":
+    for i in range(30):
+        model = get_trained_model()
+        torch.save(model.state_dict(), f'../model/model_{i}.ckpt')
+        
+    #calculate the accuracies
+    accuracies = []
+    for i in range(30):
+        model = MLP(input_size, hidden_size, num_classes).to(device)
+        model.load_state_dict(torch.load(f'../model/model_{i}.ckpt'))
+        accuracy = evaluate_model(model)
+        accuracies.append(accuracy)
+    df = pd.DataFrame({'accuracy':accuracies})
+    df.to_csv('accuracy.csv')
